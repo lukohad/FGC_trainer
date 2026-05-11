@@ -1,60 +1,117 @@
 import './style.css'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.ts'
+import './style.css';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src=${viteLogo} class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>FGC Practice Tool</h1>
+        <p>Execution training for fighting games</p>
+      </div>
 
-<div class="ticks"></div>
+      <div class="controls">
+        <select>
+          <option class="hidden_option" selected disabled>Game Select</option>
+          <option>Tekken 8</option>
+          <option>Street Fighter 6</option>
+          <option>Guilty Gear Strive</option>
+        </select>
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src=${viteLogo} alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+        <select>
+          <option class="hidden_option" selected disabled>Execution</option>
+          <option>EWGF</option>
+          <option>Wavedash</option>
+          <option>JFSR</option>
+          <option>Slide Cancel</option>
+        </select>
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+        <button type="button">
+        Freemode
+        </button>
+      </div>
+    </header>
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+    <section class="layout">
+      <div class="practice-column">
+        <section class="practice-card">
+          <p class="eyebrow">Current Drill</p>
+
+          <!-- Replace with a button or dropdown later to select other drills -->
+
+          <h2>EWGF Practice</h2>
+          <p class="command">→ ☆ ↓ ↘ + 2</p>
+          <p class="description">
+            Practice EWGF inputs with consistent timing.
+          </p>
+        </section>
+
+        <section class="input-card user-card">
+          <h3>Your Input</h3>
+
+          <div class="inputs user-input">
+            <div class="input-token">
+              <span class="input-key">→</span>
+              <small class="frame-count">1f</small>
+            </div>
+
+            <div class="input-token">
+              <span class="input-key">☆</span>
+              <small class="frame-count">2f</small>
+            </div>
+
+            <div class="input-token">
+              <span class="input-key">↓</span>
+              <small class="frame-count">3f</small>
+            </div>
+
+            <div class="input-token">
+              <span class="input-key bad">↓</span>
+              <small class="frame-count bad-text">4f</small>
+            </div>
+
+            <div class="input-token">
+              <span class="input-key">2</span>
+              <small class="frame-count">5f</small>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="stats-card">
+        <h2>Session Stats</h2>
+
+        <div class="stat">
+          <span>Accuracy</span>
+          <strong>72%</strong>
+        </div>
+
+        <div class="stat">
+          <span>Streak</span>
+          <strong>5</strong>
+        </div>
+
+        <div class="stat">
+          <span>Attempts</span>
+          <strong>38</strong>
+        </div>
+
+        <div class="stat">
+          <span>Average Timing</span>
+          <strong>14f</strong>
+        </div>
+      </aside>
+    </section>
+
+    <section class="history-card">
+      <h2>Recent Attempts</h2>
+
+      <ul>
+        <li><span class="success">✓</span> Success — 14f</li>
+        <li><span class="fail">✗</span> Missed diagonal</li>
+        <li><span class="success">✓</span> Success — 13f</li>
+        <li><span class="fail">✗</span> Late punch input</li>
+      </ul>
+    </section>
+
+  </main>
+`;
