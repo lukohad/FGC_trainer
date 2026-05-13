@@ -1,10 +1,8 @@
 import './style.css';
-import { setupKeyHandler } from './input/keyHandler';
+import {setupKeyHandlers} from './input/keyHandler';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="app">
-    <script type="module" src="./input/keyboard.ts"></script>
-    
     <header class="topbar">
       <div>
         <h1>FGC Practice Tool</h1>
@@ -118,6 +116,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   </main>
 `;
 
-setupKeyHandler((record) => {
+setupKeyHandlers((record) => {
   console.log('Input detected:', record);
+  // For now, just log the input. Later, this will update the UI and drill logic.
 });

@@ -1,11 +1,11 @@
-// src/keyHandler.ts
-
 /**
  * A fighting-game-style input after translating from a physical keyboard key.
- *
- * Examples:
- * "→", "←", "↓", "↑", "LP", "MP", "HP", "K"
  */
+
+//imports
+ import { onKeyDown, onKeyUp } from "./inputState";
+
+//Tekken inputs: GameInput = "LEFT" | "RIGHT" | "DOWN" | "UP" | "LP" | "RP" | "LK" | "RK";
 export type GameInput = string;
 
 /**
@@ -45,8 +45,8 @@ const keyMap: Record<string, GameInput> = {
 };
 
 /**
- * Keys that should not cause the page to scroll or do browser behavior
- * while practicing.
+ * Keys shouldnt cause page to scroll or do browser junk
+ * while inputs are being used.
  */
 const preventDefaultKeys = new Set([
   "Space",
@@ -57,10 +57,8 @@ const preventDefaultKeys = new Set([
 ]);
 
 /**
- * Converts a raw keyboard key into your app's fighting game input.
- *
- * This is intentionally small.
- * Later, this could handle aliases, rebinding, controller input, etc.
+ * Converts a the keyboard key into the app's fighting game input.
+ * Later, will be added with aliases, rebinding, controller input, etc.
  */
 function translateKey(key: string): GameInput | null {
   // Get key inside keyMap.
@@ -69,9 +67,7 @@ function translateKey(key: string): GameInput | null {
   return keyMap[key] ?? null;
 }
 
-/**
- * Creates a record for one valid input.
- */
+ // Creates a record for one valid input.
 function createInputRecord(key: string, input: GameInput): InputEventRecord {
   return {
     key,
@@ -81,25 +77,41 @@ function createInputRecord(key: string, input: GameInput): InputEventRecord {
 }
 
 /**
- * Sets up keyboard input listening.
+ * Sets up keyboard input listening. When a valid input is detected, calls onInput with a record of that input.
  *
- * This file should NOT directly update the page.
- * Instead, it reports valid inputs through the onInput callback.
+ * main.ts will call this function and provide the onInput callback.
  */
-export function setupKeyHandler(onInput: InputCallback): void {
-  document.addEventListener("keydown", (event) => {
+export function setupKeyHandlers(onInput: InputCallback): void {
+    document.addEventListener("keydown", (event) => {
+    // Translate the physical key into a game input (if possible).
     const input = translateKey(event.code);
 
+    // If this key isn't mapped to an input, ignore it.
     if (!input) {
       return;
     }
 
+    // Prevent default browser behavior for certain keys (like space scrolling the page).
     if (preventDefaultKeys.has(event.code)) {
       event.preventDefault();
     }
 
+    // Create a record of this input for the callback.
     const record = createInputRecord(event.code, input);
 
+    // Also update input state for SOCD resolution
+    onKeyDown(event.code); 
+
+    // Report the input through the callback so the rest of the app can react to it.
     onInput(record);
+  });
+
+
+
+  document.addEventListener("keyup", (event) => {
+    if (preventDefaultKeys.has(event.code)) {
+      event.preventDefault();
+    }
+    onKeyUp(event.code);
   });
 }
