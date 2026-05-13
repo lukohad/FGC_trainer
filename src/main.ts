@@ -1,8 +1,10 @@
-import './style.css'
 import './style.css';
+import { setupKeyHandler } from './input/keyHandler';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="app">
+    <script type="module" src="./input/keyboard.ts"></script>
+    
     <header class="topbar">
       <div>
         <h1>FGC Practice Tool</h1>
@@ -115,3 +117,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
   </main>
 `;
+
+setupKeyHandler((record) => {
+  console.log('Input detected:', record);
+});
