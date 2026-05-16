@@ -3,7 +3,7 @@
  */
 
 //imports
- import { onKeyDown, onKeyUp } from "./inputState";
+ import { onKeyDown, onKeyUp , getResolvedDirection} from "./inputState";
 
 //Tekken inputs: GameInput = "LEFT" | "RIGHT" | "DOWN" | "UP" | "LP" | "RP" | "LK" | "RK";
 export type GameInput = string;
@@ -16,6 +16,7 @@ export type InputEventRecord = {
   input: GameInput;
   key: string;
   timestamp: number;
+  active: boolean;
 };
 
 /**
@@ -48,13 +49,19 @@ const keyMap: Record<string, GameInput> = {
  * Keys shouldnt cause page to scroll or do browser junk
  * while inputs are being used.
  */
-const preventDefaultKeys = new Set([
+const preventDefaultKeys = new Set(
+  [
   "Space",
   "ArrowUp",
   "ArrowDown",
   "ArrowLeft",
   "ArrowRight",
-]);
+  "KeyW",
+  "KeyA",
+  "KeyS",
+  "KeyD"
+  ]
+);
 
 /**
  * Converts a the keyboard key into the app's fighting game input.
@@ -73,6 +80,7 @@ function createInputRecord(key: string, input: GameInput): InputEventRecord {
     key,
     input,
     timestamp: performance.now(),
+    active: false //will be used for ui display, to show which buttons are being currently held down. Will be set to true on keydown, false on keyup.
   };
 }
 
@@ -81,7 +89,10 @@ function createInputRecord(key: string, input: GameInput): InputEventRecord {
  *
  * main.ts will call this function and provide the onInput callback.
  */
-export function setupKeyHandlers(onInput: InputCallback): void {
+export function setupKeyHandlers(
+  onInput: InputCallback,
+  onRelease: (input: GameInput) => void
+): void {
     document.addEventListener("keydown", (event) => {
     // Translate the physical key into a game input (if possible).
     const input = translateKey(event.code);
@@ -98,20 +109,31 @@ export function setupKeyHandlers(onInput: InputCallback): void {
 
     // Create a record of this input for the callback.
     const record = createInputRecord(event.code, input);
+    record.active = true;
 
     // Also update input state for SOCD resolution
     onKeyDown(event.code); 
 
+    const isDirectional = ["KeyA", "KeyS", "KeyD", "Space"].includes(event.code);
+    const resolved = isDirectional ? getResolvedDirection() : input;
+    
     // Report the input through the callback so the rest of the app can react to it.
-    onInput(record);
+    onInput({...record, input: resolved});
   });
 
-
-
   document.addEventListener("keyup", (event) => {
+    // check if the key released is mapped to an input
     if (preventDefaultKeys.has(event.code)) {
       event.preventDefault();
     }
+    // Translate the physical key into a game input (if possible).
     onKeyUp(event.code);
+
+    const isDirectional = ["KeyA", "KeyS", "KeyD", "Space"].includes(event.code);
+    const resolvedInput = isDirectional ? getResolvedDirection() : translateKey(event.code);
+
+    if (resolvedInput) {
+      onRelease(resolvedInput);
+    }
   });
 }

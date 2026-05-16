@@ -1,6 +1,32 @@
 import './style.css';
 import {setupKeyHandlers} from './input/keyHandler';
 
+const displayMap: Record<string, string> = {
+  LEFT:       "←",
+  RIGHT:      "→",
+  DOWN:       "↓",
+  UP:         "↑",
+  UP_LEFT:    "↖",
+  UP_RIGHT:   "↗",
+  DOWN_LEFT:  "↙",
+  DOWN_RIGHT: "↘",
+  LP:         "1",
+  RP:         "2",
+  LK:         "3",
+  RK:         "4",
+};
+
+const directionalInputs = ["LEFT", "RIGHT", "UP", "DOWN", "UP_LEFT", "UP_RIGHT", "DOWN_LEFT", "DOWN_RIGHT", "NEUTRAL"];
+
+function updateDirectionalDisplay(resolvedDirection: string): void {
+  // Step 1: clear all directional tokens
+  directionalInputs.forEach(input => {
+    document.querySelector(`[data-input="${input}"]`)?.classList.remove('active');
+  });
+  // Step 2: highlight the resolved one
+  document.querySelector(`[data-input="${resolvedDirection}"]`)?.classList.add('active');
+}
+
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="app">
     <header class="topbar">
@@ -41,7 +67,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <h2>EWGF Practice</h2>
           <p class="command">→ ☆ ↓ ↘ + 2</p>
           <p class="description">
-            Practice EWGF inputs with consistent timing.
+            Practice EWGF inputs!
           </p>
         </section>
 
@@ -49,29 +75,69 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <h3>Your Input</h3>
 
           <div class="inputs user-input">
-            <div class="input-token">
-              <span class="input-key">→</span>
-              <small class="frame-count">1f</small>
+            <div class="input-token" data-input="LEFT">
+              <span class="input-key">←</span>
+              <small class="frame-count">0f</small>
             </div>
 
-            <div class="input-token">
-              <span class="input-key">☆</span>
-              <small class="frame-count">2f</small>
+            <div class="input-token" data-input="UP">
+              <span class="input-key">↑</span>
+              <small class="frame-count">0f</small>
             </div>
 
-            <div class="input-token">
+            <div class="input-token" data-input="DOWN">
               <span class="input-key">↓</span>
-              <small class="frame-count">3f</small>
+              <small class="frame-count">0f</small>
             </div>
 
-            <div class="input-token">
-              <span class="input-key bad">↓</span>
-              <small class="frame-count bad-text">4f</small>
+            <div class="input-token" data-input="RIGHT">
+              <span class="input-key">→</span>
+              <small class="frame-count">0f</small>
             </div>
 
-            <div class="input-token">
+            <div class="input-token" data-input="UP_LEFT">
+              <span class="input-key">↖</span>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="UP_RIGHT">
+              <span class="input-key">↗</span>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="DOWN_LEFT">
+              <span class="input-key">↙</span>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="DOWN_RIGHT">
+              <span class="input-key">↘</span>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="NEUTRAL">
+              <span class="input-key">☆</span>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="LP">
+              <span class="input-key">1</span>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="RP">
               <span class="input-key">2</span>
-              <small class="frame-count">5f</small>
+              <small class="frame-count">0f</small>
+            </div>
+
+            <div class="input-token" data-input="LK">
+              <span class="input-key">3</span>
+              <small class="frame-count">0f</small>
+            </div>
+            
+            <div class="input-token" data-input="RK">
+              <span class="input-key">4</span>
+              <small class="frame-count">0f</small>
             </div>
           </div>
         </section>
@@ -116,7 +182,21 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   </main>
 `;
 
-setupKeyHandlers((record) => {
-  console.log('Input detected:', record);
-  // For now, just log the input. Later, this will update the UI and drill logic.
-});
+setupKeyHandlers(
+  (record) => {
+    if (directionalInputs.includes(record.input)) {
+    updateDirectionalDisplay(record.input);
+    } else {
+    const token = document.querySelector(`[data-input="${record.input}"]`);
+    if (token) token.classList.add('active');
+    }
+  },
+  (input) => {
+    if (directionalInputs.includes(input)) {
+      updateDirectionalDisplay(input);
+    } else {
+      const token = document.querySelector(`[data-input="${input}"]`);
+      if (token) token.classList.remove('active');
+    }
+  }
+);

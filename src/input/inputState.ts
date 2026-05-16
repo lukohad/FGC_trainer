@@ -9,6 +9,7 @@ const heldKeys = new Set<string>();
 export function onKeyDown(code: string): void {
     heldKeys.add(code);
     const socdDirection = socdHandler();
+    // For debugging purposes, log the current SOCD-resolved direction whenever a key event happens.
     console.log('Current SOCD-resolved direction (KeyDown):', socdDirection);
 }
 
@@ -43,3 +44,7 @@ function socdHandler(): string {
 
     return "NEUTRAL";
 }
+
+export function getResolvedDirection(): string {
+    return socdHandler();
+}   
