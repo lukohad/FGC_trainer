@@ -143,29 +143,39 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         </section>
       </div>
 
-      <aside class="stats-card">
-        <h2>Session Stats</h2>
+      <div class="right-column">
+        <aside class="feed-card">
+          <!-- hardcoded rows for now -->
+          <div class="feed-entry">→ 1f</div>
+          <div class="feed-entry">↓ 2f</div>
+        </aside>
 
-        <div class="stat">
-          <span>Accuracy</span>
-          <strong>72%</strong>
-        </div>
+        <aside class="stats-card">
+          <div class= "stats-column">
+            <h2>Session Stats</h2>
 
-        <div class="stat">
-          <span>Streak</span>
-          <strong>5</strong>
-        </div>
+            <div class="stat">
+              <span>Accuracy</span>
+              <strong>72%</strong>
+            </div>
 
-        <div class="stat">
-          <span>Attempts</span>
-          <strong>38</strong>
-        </div>
+            <div class="stat">
+              <span>Streak</span>
+              <strong>5</strong>
+            </div>
 
-        <div class="stat">
-          <span>Average Timing</span>
-          <strong>14f</strong>
-        </div>
-      </aside>
+            <div class="stat">
+              <span>Attempts</span>
+              <strong>38</strong>
+            </div>
+
+            <div class="stat">
+              <span>Average Timing</span>
+              <strong>14f</strong>
+            </div>
+          </div>
+        </aside>
+      </div>
     </section>
 
     <section class="history-card">

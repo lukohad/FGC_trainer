@@ -71,16 +71,33 @@ button {
   color: #ffffff;
 }
 
+.right-column {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
 .practice-card,
 .stats-card,
 .history-card,
-.input-card
+.input-card,
+.feed-card
  {
   background: #1f2937;
   border: 1px solid #374151;
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.stats-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.stats-card {
+  flex: 1;
 }
 
 .practice-column {
@@ -101,6 +118,14 @@ button {
 .stats-card h2,
 .history-card h2 {
   margin-top: 0;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
 }
 
 .command {
@@ -142,11 +167,6 @@ button {
   color: #fecaca;
 }
 
-.stats-card {
-  display: flex;
-  flex-direction: column;
-}
-
 .stat {
   flex: 1;
   display: flex;
@@ -166,6 +186,13 @@ button {
 
 .stat strong {
   font-size: 1.4rem;
+}
+
+.feed-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
 }
 
 .history-card {
@@ -201,6 +228,10 @@ button {
 
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .right-column {
+    flex-direction: column;
   }
 
   .controls {
