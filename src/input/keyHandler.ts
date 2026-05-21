@@ -92,8 +92,11 @@ function createInputRecord(key: string, input: GameInput): InputEventRecord {
 export function setupKeyHandlers(
   onInput: InputCallback,
   onRelease: (input: GameInput) => void
-): void {
-    document.addEventListener("keydown", (event) => {
+): void 
+{
+  document.addEventListener("keydown", (event) => 
+  {
+    if (event.repeat) return;
     // Translate the physical key into a game input (if possible).
     const input = translateKey(event.code);
 

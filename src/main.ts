@@ -249,14 +249,15 @@ setupKeyHandlers(
     }
   },
   (input) => {
-    if (directionalInputs.includes(input)) {
-      updateDirectionalDisplay(input);
-      if (input === "NEUTRAL") {
-        startNewFeedEntry("NEUTRAL"); // released to neutral — start neutral entry
-      }
-    } else {
-      const token = document.querySelector(`[data-input="${input}"]`);
-      if (token) token.classList.remove('active');
-    }
+  if (directionalInputs.includes(input))
+  {
+    updateDirectionalDisplay(input);
+    startNewFeedEntry(input); // always log directional changes on release
+  } 
+  else 
+  {
+    const token = document.querySelector(`[data-input="${input}"]`);
+    if (token) token.classList.remove('active');
+  }
   }
 );

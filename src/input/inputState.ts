@@ -22,27 +22,20 @@ export function onKeyUp(code: string): void {
 
 // Looks at heldKeys and returns the resolved directional
 function socdHandler(): string {
-    const left  = heldKeys.has("KeyA");
-    const right = heldKeys.has("KeyD");
-    const down  = heldKeys.has("KeyS");
-    const up    = heldKeys.has("Space");
+  const left  = heldKeys.has("KeyA");
+  const right = heldKeys.has("KeyD");
+  const down  = heldKeys.has("KeyS");
+  const up    = heldKeys.has("Space");
 
-    // SOCD resolution logic:
-    if (left && right) return "NEUTRAL";
-    if (down && up)    return "NEUTRAL";
+  // cancel opposites first
+  const resolvedH = left && right ? false : left ? "LEFT" : right ? "RIGHT" : false;
+  const resolvedV = down && up    ? false : down ? "DOWN" : up   ? "UP"    : false;
 
-    if (left && up)   return "UP_LEFT";
-    if (right && up)  return "UP_RIGHT";
-    if (left && down) return "DOWN_LEFT";
-    if (right && down) return "DOWN_RIGHT";
-
-    //regular directional logic:
-    if (left)  return "LEFT";
-    if (right) return "RIGHT";
-    if (down)  return "DOWN";
-    if (up)    return "UP";
-
-    return "NEUTRAL";
+  // now combine what survived
+  if (resolvedH && resolvedV) return `${resolvedV}_${resolvedH}`;
+  if (resolvedH) return resolvedH;
+  if (resolvedV) return resolvedV;
+  return "NEUTRAL";
 }
 
 export function getResolvedDirection(): string {
