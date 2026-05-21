@@ -5,6 +5,7 @@ const maxFeedCount = 9 // Max number of entries to show in the feed at once
 let inputStartTime: number = performance.now();
 let activeFeedEntry: Element | null = null;
 let activeSymbol: string = "☆"; // start at neutral
+let activeToken: Element | null = null; // the currently active input token in the UI, to be updated with frame counts and such
 
 
 const displayMap: Record<string, string> = {
@@ -57,6 +58,7 @@ function startNewFeedEntry(input: string): void
   activeFeedEntry = entry;
   activeSymbol = displayMap[input] ?? input;
   inputStartTime = performance.now();
+  activeToken = document.querySelector(`[data-input="${input}"]`);
 }
 
 // tick runs every frame and updates the live counter
@@ -67,6 +69,11 @@ function tick(): void
     const elapsed = performance.now() - inputStartTime;
     const frames = Math.min(Math.round(elapsed / (1000 / 60)), 99);
     activeFeedEntry.textContent = `${activeSymbol} ${frames}f`;
+    
+    if (activeToken) {
+      const frameEl = activeToken.querySelector('.frame-count');
+      if (frameEl) frameEl.textContent = `${frames}f`;
+    }
   }
   requestAnimationFrame(tick);
 }
@@ -74,6 +81,7 @@ function tick(): void
 // start with neutral and kick off the loop
 startNewFeedEntry("NEUTRAL");
 requestAnimationFrame(tick);
+
 
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
