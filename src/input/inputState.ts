@@ -8,16 +8,11 @@ const heldKeys = new Set<string>();
 // Called by keyHandler when a key goes down
 export function onKeyDown(code: string): void {
     heldKeys.add(code);
-    const socdDirection = socdHandler();
-    // For debugging purposes, log the current SOCD-resolved direction whenever a key event happens.
-    console.log('Current SOCD-resolved direction (KeyDown):', socdDirection);
 }
 
 // Called by keyHandler when a key is released
 export function onKeyUp(code: string): void {
     heldKeys.delete(code);
-    const socdDirection = socdHandler();
-    console.log('Current SOCD-resolved direction (KeyUp):', socdDirection);
 }
 
 // Looks at heldKeys and returns the resolved directional

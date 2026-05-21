@@ -1,13 +1,14 @@
 import './style.css';
 import {setupKeyHandlers} from './input/keyHandler';
 
+//vars for tracking input feed and timing
 const maxFeedCount = 9 // Max number of entries to show in the feed at once
 let inputStartTime: number = performance.now();
 let activeFeedEntry: Element | null = null;
 let activeSymbol: string = "☆"; // start at neutral
 let activeToken: Element | null = null; // the currently active input token in the UI, to be updated with frame counts and such
 
-
+//display map for showing inputs as symbols in the feed and input display
 const displayMap: Record<string, string> = {
   LEFT:       "←",
   RIGHT:      "→",
