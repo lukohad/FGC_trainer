@@ -37,17 +37,3 @@ export function nextInput(drill: Drill, currentProgress: number, input: GameInpu
 export function isDrillComplete(drill: Drill, currentProgress: number): boolean {
   return currentProgress >= drill.sequence.length;
 }
-
-//drill check in main
-export function checkDrillInput(input: string): void {
-  const expectedInput = getNextExpectedInput(drill.EWGF, drillProgress);
-  if (input === expectedInput) {
-    drillProgress = nextInput(drill.EWGF, drillProgress, input);
-    if (isDrillComplete(drill.EWGF, drillProgress)) {
-      console.log("Drill complete!");
-      drillProgress = 0;
-    }
-  } else {
-    drillProgress = 0;
-  }
-}
