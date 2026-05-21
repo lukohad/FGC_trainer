@@ -1,5 +1,8 @@
+//imports
 import './style.css';
 import {setupKeyHandlers} from './input/keyHandler';
+import * as drill from './drills'; //mainly for dot syntax for drill types
+import { nextInput, isDrillComplete, getNextExpectedInput } from './drills'; //functions for the drill handling logic
 
 //vars for tracking input feed and timing
 const maxFeedCount = 9 // Max number of entries to show in the feed at once
@@ -7,6 +10,7 @@ let inputStartTime: number = performance.now();
 let activeFeedEntry: Element | null = null;
 let activeSymbol: string = "☆"; // start at neutral
 let activeToken: Element | null = null; // the currently active input token in the UI, to be updated with frame counts and such
+let drillProgress: number = 0; // how far the user is in the current drill sequence
 
 //display map for showing inputs as symbols in the feed and input display
 const displayMap: Record<string, string> = {
@@ -77,6 +81,20 @@ function tick(): void
     }
   }
   requestAnimationFrame(tick);
+}
+
+//drill check in keyhandler input callback
+function checkDrillInput(input: string): void {
+  const expectedInput = getNextExpectedInput(drill.EWGF, drillProgress);
+  if (input === expectedInput) {
+    drillProgress = nextInput(drill.EWGF, drillProgress, input);
+    if (isDrillComplete(drill.EWGF, drillProgress)) {
+      console.log("Drill complete!");
+      drillProgress = 0;
+    }
+  } else {
+    drillProgress = 0;
+  }
 }
 
 // start with neutral and kick off the loop
@@ -248,25 +266,34 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `;
 
 setupKeyHandlers(
+  //input callback
   (record) => {
-    startNewFeedEntry(record.input); // new input — start fresh entry
-    if (directionalInputs.includes(record.input)) {
-      updateDirectionalDisplay(record.input);
-    } else {
-      const token = document.querySelector(`[data-input="${record.input}"]`);
-      if (token) token.classList.add('active');
-    }
-  },
+  startNewFeedEntry(record.input);
+  console.log(`Real input: ${record.input}, expected drill input: ${getNextExpectedInput(drill.EWGF, drillProgress)}`);
+
+  // drill check happens for ALL inputs, not just directionals
+  checkDrillInput(record.input);
+
+  // display update happens separately
+  if (directionalInputs.includes(record.input)) {
+    updateDirectionalDisplay(record.input);
+  } else {
+    const token = document.querySelector(`[data-input="${record.input}"]`);
+    if (token) token.classList.add('active');
+  }
+},
+  //key release callback
   (input) => {
-  if (directionalInputs.includes(input))
-  {
+  if (directionalInputs.includes(input)) {
     updateDirectionalDisplay(input);
-    startNewFeedEntry(input); // always log directional changes on release
-  } 
-  else 
-  {
+    startNewFeedEntry(input);
+
+    // check neutral against drill sequence
+    if (input === "NEUTRAL") {
+      checkDrillInput(input);
+    }
+  } else {
     const token = document.querySelector(`[data-input="${input}"]`);
     if (token) token.classList.remove('active');
   }
-  }
-);
+});
