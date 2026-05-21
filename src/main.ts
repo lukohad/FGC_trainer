@@ -1,6 +1,12 @@
 import './style.css';
 import {setupKeyHandlers} from './input/keyHandler';
 
+const maxFeedCount = 9 // Max number of entries to show in the feed at once
+let inputStartTime: number = performance.now();
+let activeFeedEntry: Element | null = null;
+let activeSymbol: string = "☆"; // start at neutral
+
+
 const displayMap: Record<string, string> = {
   LEFT:       "←",
   RIGHT:      "→",
@@ -14,11 +20,14 @@ const displayMap: Record<string, string> = {
   RP:         "2",
   LK:         "3",
   RK:         "4",
+
+  NEUTRAL: "☆"
 };
 
 const directionalInputs = ["LEFT", "RIGHT", "UP", "DOWN", "UP_LEFT", "UP_RIGHT", "DOWN_LEFT", "DOWN_RIGHT", "NEUTRAL"];
 
-function updateDirectionalDisplay(resolvedDirection: string): void {
+function updateDirectionalDisplay(resolvedDirection: string): void 
+{
   // Step 1: clear all directional tokens
   directionalInputs.forEach(input => {
     document.querySelector(`[data-input="${input}"]`)?.classList.remove('active');
@@ -26,6 +35,46 @@ function updateDirectionalDisplay(resolvedDirection: string): void {
   // Step 2: highlight the resolved one
   document.querySelector(`[data-input="${resolvedDirection}"]`)?.classList.add('active');
 }
+
+function startNewFeedEntry(input: string): void
+{
+  const feed = document.querySelector('.feed-card');
+  if (!feed) return;
+
+  // trim old entries
+  while (feed.children.length >= maxFeedCount)
+  {
+    const last = feed.lastChild;
+    if (last) feed.removeChild(last);
+  }
+
+  // create new entry
+  const entry = document.createElement('div');
+  entry.classList.add('feed-entry');
+  feed.prepend(entry);
+
+  // track it
+  activeFeedEntry = entry;
+  activeSymbol = displayMap[input] ?? input;
+  inputStartTime = performance.now();
+}
+
+// tick runs every frame and updates the live counter
+function tick(): void
+{
+  if (activeFeedEntry)
+  {
+    const elapsed = performance.now() - inputStartTime;
+    const frames = Math.min(Math.round(elapsed / (1000 / 60)), 99);
+    activeFeedEntry.textContent = `${activeSymbol} ${frames}f`;
+  }
+  requestAnimationFrame(tick);
+}
+
+// start with neutral and kick off the loop
+startNewFeedEntry("NEUTRAL");
+requestAnimationFrame(tick);
+
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="app">
@@ -145,9 +194,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
       <div class="right-column">
         <aside class="feed-card">
-          <!-- hardcoded rows for now -->
-          <div class="feed-entry">→ 1f</div>
-          <div class="feed-entry">↓ 2f</div>
         </aside>
 
         <aside class="stats-card">
@@ -194,16 +240,20 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 setupKeyHandlers(
   (record) => {
+    startNewFeedEntry(record.input); // new input — start fresh entry
     if (directionalInputs.includes(record.input)) {
-    updateDirectionalDisplay(record.input);
+      updateDirectionalDisplay(record.input);
     } else {
-    const token = document.querySelector(`[data-input="${record.input}"]`);
-    if (token) token.classList.add('active');
+      const token = document.querySelector(`[data-input="${record.input}"]`);
+      if (token) token.classList.add('active');
     }
   },
   (input) => {
     if (directionalInputs.includes(input)) {
       updateDirectionalDisplay(input);
+      if (input === "NEUTRAL") {
+        startNewFeedEntry("NEUTRAL"); // released to neutral — start neutral entry
+      }
     } else {
       const token = document.querySelector(`[data-input="${input}"]`);
       if (token) token.classList.remove('active');
