@@ -9,8 +9,8 @@ export type Drill = {
 
 export const EWGF: Drill = {
   name: "EWGF",
-  sequence: ["RIGHT", "NEUTRAL", "DOWN", "DOWN_RIGHT", "RP"],
-  jf: 3
+  sequence: ["RIGHT", "DOWN", "DOWN_RIGHT", "RP"],
+  jf: 2
 };
 
 //functions

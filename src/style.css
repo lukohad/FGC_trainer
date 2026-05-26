@@ -71,6 +71,21 @@ button {
   color: #ffffff;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.command.pass {
+  color: #4ade80;
+  animation: pulse 0.25s ease;
+}
+.command.fail {
+  color: #ef4444;
+  animation: shake 0.25s ease;
+}
+
 .right-column {
   display: flex;
   flex-direction: row;

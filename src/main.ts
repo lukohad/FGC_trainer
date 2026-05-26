@@ -83,17 +83,27 @@ function tick(): void
   requestAnimationFrame(tick);
 }
 
+//helper to flash the input feed entry green for success or red for failure
+function flashCommand(className: 'pass' | 'fail'): void {
+  const commandEl = document.querySelector('.command');
+  if (!commandEl) return;
+  commandEl.classList.add(className);
+  setTimeout(() => commandEl.classList.remove(className), 250);
+}
 //drill check in keyhandler input callback
 function checkDrillInput(input: string): void {
+  if (input === "NEUTRAL") return; // neutral is never checked against the drill
+  
   const expectedInput = getNextExpectedInput(drill.EWGF, drillProgress);
   if (input === expectedInput) {
     drillProgress = nextInput(drill.EWGF, drillProgress, input);
     if (isDrillComplete(drill.EWGF, drillProgress)) {
-      console.log("Drill complete!");
       drillProgress = 0;
+      flashCommand('pass');
     }
   } else {
     drillProgress = 0;
+    flashCommand('fail');
   }
 }
 
