@@ -5,7 +5,7 @@ import * as drill from './drills'; //mainly for dot syntax for drill types
 import { nextInput, isDrillComplete, getNextExpectedInput } from './drills'; //functions for the drill handling logic
 
 //vars for tracking input feed and timing
-const maxFeedCount = 9 // Max number of entries to show in the feed at once
+const maxFeedCount = 10 // Max number of entries to show in the feed at once
 let inputStartTime: number = performance.now();
 let activeFeedEntry: Element | null = null;
 let activeSymbol: string = "☆"; // start at neutral
@@ -56,7 +56,19 @@ function startNewFeedEntry(input: string): void
 
   // create new entry
   const entry = document.createElement('div');
-  entry.classList.add('feed-entry');
+  const result = getInputResult(input);
+
+  if (result === 'pass') {
+    entry.classList.add('feed-entry', 'pass');
+  } else if (result === 'fail') {
+    entry.classList.add('feed-entry', 'fail');
+  } else {
+    entry.classList.add('feed-entry');
+  }
+
+  // set text immediately so it's never blank
+  entry.textContent = `${displayMap[input] ?? input} 0f`;
+
   feed.prepend(entry);
 
   // track it
@@ -105,6 +117,12 @@ function checkDrillInput(input: string): void {
     drillProgress = 0;
     flashCommand('fail');
   }
+}
+// just checks — no side effects, returns result
+function getInputResult(input: string): 'pass' | 'fail' | 'neutral' {
+  if (input === "NEUTRAL") return 'neutral';
+  const expectedInput = getNextExpectedInput(drill.EWGF, drillProgress);
+  return input === expectedInput ? 'pass' : 'fail';
 }
 
 // start with neutral and kick off the loop
@@ -279,7 +297,6 @@ setupKeyHandlers(
   //input callback
   (record) => {
   startNewFeedEntry(record.input);
-  console.log(`Real input: ${record.input}, expected drill input: ${getNextExpectedInput(drill.EWGF, drillProgress)}`);
 
   // drill check happens for ALL inputs, not just directionals
   checkDrillInput(record.input);
